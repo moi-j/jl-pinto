@@ -1,0 +1,87 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import ArchiveHero from '../../components/ArchiveHero.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import { sortByPublishedDate, countWords } from '../../utils/content';
+import { getCanonicalUrl } from '../../utils/seo';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const articles = sortByPublishedDate(await getCollection('articles'));
+  return paginate(articles, { pageSize: 10 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+const totalArticles = page.total;
+const currentPage = page.currentPage;
+const pageTitle =
+  currentPage === 1
+    ? 'Artículos — Juan Luis Pinto'
+    : `Artículos — Página ${currentPage} — Juan Luis Pinto`;
+
+const canonicalPath =
+  currentPage === 1 ? '/articulos/' : `/articulos/${currentPage}/`;
+---
+
+<SiteLayout
+  title={pageTitle}
+  description="Archivo de artículos y columnas de opinión de Juan Luis Pinto sobre cultura, sociedad y literatura."
+  canonicalUrl={getCanonicalUrl(canonicalPath)}
+  currentPath="/articulos/"
+>
+  <ArchiveHero
+    title="Artículos"
+    intro="Crónicas, columnas y reflexiones con la voz directa que caracteriza su trabajo periodístico desde los años noventa hasta la actualidad."
+    count={totalArticles}
+    countLabel="artículos publicados"
+  />
+
+  <section class="section container">
+    {
+      currentPage > 1 && (
+        <p class="articles-page-meta">
+          Página {currentPage} de {page.lastPage}
+        </p>
+      )
+    }
+
+    <div class="articles-grid">
+      {
+        page.data.map((article) => (
+          <ArticleCard
+            title={article.data.title}
+            href={`/articulos/${article.slug}/`}
+            summary={article.data.summary}
+            publishedDate={article.data.publishedDate}
+            wordCount={countWords(article.body)}
+            featured={article.data.featured}
+          />
+        ))
+      }
+    </div>
+
+    <Pagination
+      currentPage={page.currentPage}
+      lastPage={page.lastPage}
+      prevUrl={page.url.prev}
+      nextUrl={page.url.next}
+      basePath="/articulos/"
+    />
+  </section>
+</SiteLayout>
+
+<style>
+  .articles-page-meta {
+    margin: 0 0 var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-ink-soft);
+  }
+
+  .articles-grid {
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+</style>

@@ -1,0 +1,52 @@
+---
+import '../styles/global.css';
+import SiteHeader from './SiteHeader.astro';
+import Footer from './Footer.astro';
+import Meta from './Meta.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string;
+  ogImage?: string;
+  currentPath?: string;
+  type?: 'website' | 'article';
+  publishedDate?: Date;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  ogImage,
+  currentPath = Astro.url.pathname,
+  type = 'website',
+  publishedDate,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <Meta
+      title={title}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      ogImage={ogImage}
+      type={type}
+      publishedDate={publishedDate}
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido-principal">Saltar al contenido</a>
+    <SiteHeader currentPath={currentPath} />
+    <main id="contenido-principal">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

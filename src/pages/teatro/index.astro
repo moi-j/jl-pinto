@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import ArchiveHero from '../../components/ArchiveHero.astro';
+import PlayCard from '../../components/PlayCard.astro';
+import { sortByPublishedDate, cleanSummary } from '../../utils/content';
+import { getCanonicalUrl } from '../../utils/seo';
+
+const plays = sortByPublishedDate(await getCollection('plays'));
+---
+
+<SiteLayout
+  title="Teatro — Juan Luis Pinto"
+  description="Obras teatrales de Juan Luis Pinto, incluidas comedias premiadas y piezas representadas en Málaga."
+  canonicalUrl={getCanonicalUrl('/teatro/')}
+  currentPath="/teatro/"
+>
+  <ArchiveHero
+    title="Obra teatral"
+    intro="Dramaturgia nacida de la experiencia escénica: comedia social, sátira y textos galardonados en certámenes malagueños."
+    count={plays.length}
+    countLabel="obras"
+  />
+
+  <section class="section container">
+    <div class="grid-cards grid-cards--3">
+      {plays.map((play) => (
+        <PlayCard
+          title={play.data.title}
+          href={`/teatro/${play.slug}/`}
+          summary={cleanSummary(
+            play.data.summary,
+            play.data.title,
+            'Obra teatral: {title}.',
+          )}
+          year={play.data.publishedYear ?? play.data.publishedDate?.getFullYear()}
+          awards={play.data.awards}
+          coverImage={play.data.coverImage}
+        />
+      ))}
+    </div>
+  </section>
+</SiteLayout>

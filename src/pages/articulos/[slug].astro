@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { sortByPublishedDate, dateFormatter } from '../../utils/content';
+import { getCanonicalUrl } from '../../utils/seo';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await article.render();
+
+const formattedDate = article.data.publishedDate
+  ? dateFormatter.format(article.data.publishedDate)
+  : null;
+
+const relatedArticles = sortByPublishedDate(await getCollection('articles'))
+  .filter((a) => a.slug !== article.slug)
+  .slice(0, 3);
+---
+
+<SiteLayout
+  title={`${article.data.title} — Juan Luis Pinto`}
+  description={article.data.summary}
+  canonicalUrl={getCanonicalUrl(`/articulos/${article.slug}/`)}
+  currentPath="/articulos/"
+  type="article"
+  publishedDate={article.data.publishedDate}
+>
+  <div class="container section">
+    <Breadcrumbs
+      items={[
+        { label: 'Inicio', href: '/' },
+        { label: 'Artículos', href: '/articulos/' },
+        { label: article.data.title },
+      ]}
+    />
+
+    <div class="detail-layout">
+      <article>
+        <header class="detail-header">
+          <h1>{article.data.title}</h1>
+          {formattedDate && article.data.publishedDate && (
+            <time datetime={article.data.publishedDate.toISOString()}>
+              {formattedDate}
+            </time>
+          )}
+        </header>
+        <div class="prose article-body">
+          <Content />
+        </div>
+      </article>
+
+      <aside class="detail-meta" aria-label="Metadatos del artículo">
+        <dl>
+          {formattedDate && (
+            <>
+              <dt>Publicado</dt>
+              <dd>{formattedDate}</dd>
+            </>
+          )}
+        </dl>
+        <p class="detail-meta__author">
+          Por <a href="/sobre-mi/">Juan Luis Pinto</a>
+        </p>
+      </aside>
+    </div>
+
+    {relatedArticles.length > 0 && (
+      <section class="related">
+        <h2>Más artículos</h2>
+        <ul>
+          {relatedArticles.map((related) => (
+            <li>
+              <a href={`/articulos/${related.slug}/`}>{related.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </div>
+</SiteLayout>
+
+<style>
+  .detail-header {
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .detail-header time {
+    font-size: var(--font-size-sm);
+    color: var(--color-ink-soft);
+  }
+
+  .detail-meta__author {
+    margin: var(--spacing-lg) 0 0;
+    font-size: var(--font-size-sm);
+  }
+
+  .related {
+    margin-top: var(--spacing-4xl);
+    padding-top: var(--spacing-2xl);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .related ul {
+    list-style: none;
+    margin: var(--spacing-lg) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--spacing-sm);
+  }
+
+  .related a {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    text-decoration: none;
+    border: none;
+  }
+</style>

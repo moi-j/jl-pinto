@@ -1,0 +1,78 @@
+---
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = Astro.url.pathname } = Astro.props;
+
+const navItems = [
+  { label: 'Inicio', href: '/' },
+  { label: 'Artículos', href: '/articulos/' },
+  { label: 'Novelas', href: '/novelas/' },
+  { label: 'Teatro', href: '/teatro/' },
+  { label: 'Pregones', href: '/pregones/' },
+  { label: 'Sobre mí', href: '/sobre-mi/' },
+];
+---
+
+<nav class="main-nav" aria-label="Navegación principal">
+  <ul>
+    {navItems.map((item) => {
+      const isActive =
+        currentPath === item.href ||
+        (item.href !== '/' && currentPath.startsWith(item.href));
+      return (
+        <li>
+          <a
+            href={item.href}
+            class:list={[isActive && 'active']}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>
+
+<style>
+  .main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+    justify-content: flex-end;
+  }
+
+  .main-nav a {
+    display: inline-block;
+    padding: 0.35rem 0;
+    color: var(--color-ink-soft);
+    text-decoration: none;
+    border: none;
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .main-nav a:hover {
+    color: var(--color-accent-terracotta);
+    border-bottom-color: var(--color-accent-terracotta);
+  }
+
+  .main-nav a.active {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-accent-gold);
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .main-nav ul {
+      justify-content: center;
+    }
+  }
+</style>

@@ -1,0 +1,103 @@
+---
+const year = new Date().getFullYear();
+---
+
+<div class="footer-quote">
+  <div class="container footer-quote__inner">
+    <blockquote cite="/sobre-mi/">
+      <p>
+        «Novelista, cronista y dramaturgo malagueño. Miembro de la Escuela de Cante y
+        Copla de la Federación Malagueña de Peñas y entidades culturales asociadas.»
+      </p>
+    </blockquote>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-content container">
+    <div class="footer-section">
+      <p class="footer-name">Juan Luis Pinto</p>
+      <p class="copyright">&copy; {year} J.L. Pinto. Todos los derechos reservados.</p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Enlaces del pie de página">
+      <ul>
+        <li><a href="/articulos/">Artículos</a></li>
+        <li><a href="/novelas/">Novelas</a></li>
+        <li><a href="/teatro/">Teatro</a></li>
+        <li><a href="/pregones/">Pregones</a></li>
+        <li><a href="/sobre-mi/">Sobre mí</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  .footer-quote {
+    margin-top: var(--spacing-4xl);
+    padding: var(--spacing-2xl) 0;
+    background: var(--color-ink);
+    color: #f5f0e8;
+  }
+
+  .footer-quote__inner blockquote {
+    margin: 0;
+    max-width: 46rem;
+  }
+
+  .footer-quote__inner p {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .main-footer {
+    background: var(--color-paper-elevated);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-xl) var(--container-padding) var(--spacing-2xl);
+  }
+
+  .footer-name {
+    margin: 0 0 var(--spacing-xs);
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--color-ink);
+  }
+
+  .copyright {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-ink-soft);
+  }
+
+  .footer-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md) var(--spacing-lg);
+  }
+
+  .footer-nav a {
+    color: var(--color-ink-soft);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    border: none;
+  }
+
+  .footer-nav a:hover {
+    color: var(--color-accent-terracotta);
+  }
+</style>

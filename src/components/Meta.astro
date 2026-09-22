@@ -1,0 +1,76 @@
+---
+import {
+  DEFAULT_OG_IMAGE_PATH,
+  getAbsoluteAssetUrl,
+  getCanonicalUrl,
+} from '../utils/seo';
+
+export interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+  author?: string;
+  publishedDate?: Date;
+  modified?: Date;
+  type?: 'article' | 'book' | 'website';
+}
+
+const {
+  title,
+  description,
+  ogImage = DEFAULT_OG_IMAGE_PATH,
+  canonicalUrl,
+  author = 'J.L. Pinto',
+  publishedDate,
+  modified,
+  type = 'website',
+} = Astro.props;
+
+const fullCanonical = canonicalUrl || getCanonicalUrl(Astro.url.pathname);
+
+const socialDescription =
+  description.length > 300 ? `${description.slice(0, 297).trim()}…` : description;
+
+const ogImageUrl = getAbsoluteAssetUrl(ogImage);
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'BlogPosting' : type === 'book' ? 'Book' : 'WebPage',
+  name: title,
+  description: socialDescription,
+  url: fullCanonical,
+  author: {
+    '@type': 'Person',
+    name: author,
+  },
+  ...(publishedDate && { datePublished: publishedDate.toISOString() }),
+  ...(modified && { dateModified: modified.toISOString() }),
+  image: ogImageUrl,
+};
+---
+
+<meta name="description" content={socialDescription} />
+<meta name="author" content={author} />
+<meta name="robots" content="index, follow" />
+
+<meta property="og:site_name" content="Juan Luis Pinto" />
+<meta property="og:locale" content="es_ES" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={socialDescription} />
+<meta property="og:type" content={type === 'article' ? 'article' : 'website'} />
+<meta property="og:url" content={fullCanonical} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image:alt" content={`${title} — Juan Luis Pinto`} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={socialDescription} />
+<meta name="twitter:image" content={ogImageUrl} />
+
+<link rel="canonical" href={fullCanonical} />
+<link rel="alternate" hreflang="es" href={fullCanonical} />
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+<slot />

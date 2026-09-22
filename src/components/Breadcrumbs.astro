@@ -1,0 +1,95 @@
+---
+// Breadcrumb navigation component for detail pages
+// Semantic markup with ARIA support for accessibility
+// Shows: Home > Category > Title
+
+export interface Props {
+  items: Array<{
+    label: string;
+    href?: string;
+  }>;
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="Migas de pan">
+  <ol>
+    {items.map((item, index) => {
+      const isLast = index === items.length - 1;
+      return (
+        <li>
+          {item.href && !isLast ? (
+            <a href={item.href}>{item.label}</a>
+          ) : (
+            <span aria-current={isLast ? 'page' : undefined}>
+              {item.label}
+            </span>
+          )}
+          {!isLast && <span class="separator">/</span>}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin: var(--spacing-lg) 0;
+  }
+
+  .breadcrumbs ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    align-items: center;
+    font-size: var(--font-size-sm);
+  }
+
+  .breadcrumbs li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .breadcrumbs a {
+    color: var(--color-accent-warm);
+    text-decoration: none;
+    border: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .breadcrumbs a:hover {
+    color: var(--color-text-dark);
+  }
+
+  .breadcrumbs a:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .breadcrumbs span[aria-current="page"] {
+    color: var(--color-text-light);
+    font-weight: 500;
+  }
+
+  .separator {
+    color: var(--color-border);
+    margin: 0 var(--spacing-xs);
+  }
+
+  @media (max-width: 768px) {
+    .breadcrumbs {
+      margin: var(--spacing-md) 0;
+    }
+
+    .breadcrumbs ol {
+      gap: var(--spacing-xs);
+    }
+  }
+</style>

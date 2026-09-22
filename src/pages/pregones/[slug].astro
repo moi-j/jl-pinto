@@ -1,0 +1,92 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { dateFormatter } from '../../utils/content';
+import { getCanonicalUrl } from '../../utils/seo';
+
+export async function getStaticPaths() {
+  const proclamations = await getCollection('proclamations');
+  return proclamations.map((item) => ({
+    params: { slug: item.slug },
+    props: { proclamation: item },
+  }));
+}
+
+const { proclamation } = Astro.props;
+const { Content } = await proclamation.render();
+---
+
+<SiteLayout
+  title={`${proclamation.data.title} — Juan Luis Pinto`}
+  description={proclamation.data.summary}
+  canonicalUrl={getCanonicalUrl(`/pregones/${proclamation.slug}/`)}
+  currentPath="/pregones/"
+  type="article"
+>
+  <div class="container section">
+    <Breadcrumbs
+      items={[
+        { label: 'Inicio', href: '/' },
+        { label: 'Pregones', href: '/pregones/' },
+        { label: proclamation.data.title },
+      ]}
+    />
+
+    <div class="detail-layout">
+      <article>
+        <header class="detail-header">
+          <h1>{proclamation.data.title}</h1>
+          <p class="novel-lead">{proclamation.data.summary}</p>
+        </header>
+        <div class="prose">
+          <Content />
+        </div>
+      </article>
+
+      <aside class="detail-meta" aria-label="Información del pregón">
+        <dl>
+          {proclamation.data.eventDate && (
+            <>
+              <dt>Acto</dt>
+              <dd>{dateFormatter.format(proclamation.data.eventDate)}</dd>
+            </>
+          )}
+          {proclamation.data.downloadUrl && (
+            <>
+              <dt>Documento</dt>
+              <dd>
+                <a
+                  class="btn btn--secondary"
+                  href={proclamation.data.downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Descargar PDF
+                </a>
+              </dd>
+            </>
+          )}
+        </dl>
+      </aside>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .detail-header {
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .novel-lead {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    color: var(--color-ink-muted);
+  }
+
+  .detail-meta .btn {
+    width: 100%;
+  }
+</style>

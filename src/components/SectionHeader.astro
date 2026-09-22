@@ -1,0 +1,64 @@
+---
+interface Props {
+  title: string;
+  intro?: string;
+  href?: string;
+  linkLabel?: string;
+}
+
+const { title, intro, href, linkLabel = 'Ver todo' } = Astro.props;
+---
+
+<header class="section-header">
+  <div>
+    <h2 class="section-header__title">{title}</h2>
+    {intro && <p class="section-header__intro">{intro}</p>}
+  </div>
+  {href && (
+    <a class="section-header__link" href={href}>
+      {linkLabel} →
+    </a>
+  )}
+</header>
+
+<style>
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .section-header__title {
+    margin: 0;
+    font-size: var(--font-size-h2);
+  }
+
+  .section-header__intro {
+    margin: var(--spacing-sm) 0 0;
+    max-width: 42rem;
+    color: var(--color-ink-soft);
+  }
+
+  .section-header__link {
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  .section-header__link:hover {
+    border-bottom-color: var(--color-accent-terracotta);
+  }
+
+  @media (max-width: 640px) {
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

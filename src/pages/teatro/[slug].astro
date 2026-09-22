@@ -1,0 +1,131 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { cleanSummary, dateFormatter } from '../../utils/content';
+import { getCanonicalUrl } from '../../utils/seo';
+
+export async function getStaticPaths() {
+  const plays = await getCollection('plays');
+  return plays.map((play) => ({
+    params: { slug: play.slug },
+    props: { play },
+  }));
+}
+
+const { play } = Astro.props;
+const { Content } = await play.render();
+
+const summary = cleanSummary(
+  play.data.summary,
+  play.data.title,
+  'Obra teatral de Juan Luis Pinto: {title}.',
+);
+---
+
+<SiteLayout
+  title={`${play.data.title} — Teatro — Juan Luis Pinto`}
+  description={summary}
+  canonicalUrl={getCanonicalUrl(`/teatro/${play.slug}/`)}
+  ogImage={play.data.coverImage}
+  currentPath="/teatro/"
+  type="article"
+>
+  <div class="container section">
+    <Breadcrumbs
+      items={[
+        { label: 'Inicio', href: '/' },
+        { label: 'Teatro', href: '/teatro/' },
+        { label: play.data.title },
+      ]}
+    />
+
+    <div class="detail-layout">
+      <article>
+        <header class="detail-header">
+          <h1>{play.data.title}</h1>
+          <p class="novel-lead">{summary}</p>
+        </header>
+        <div class="prose">
+          <Content />
+        </div>
+      </article>
+
+      <aside class="detail-meta" aria-label="Información de la obra">
+        {play.data.coverImage && (
+          <img
+            class="play-cover"
+            src={play.data.coverImage}
+            alt={`Cartel o imagen de ${play.data.title}`}
+            width="320"
+            loading="lazy"
+          />
+        )}
+        <dl>
+          {play.data.publishedDate && (
+            <>
+              <dt>Publicación</dt>
+              <dd>{dateFormatter.format(play.data.publishedDate)}</dd>
+            </>
+          )}
+          {play.data.performanceDate && (
+            <>
+              <dt>Representación</dt>
+              <dd>{dateFormatter.format(play.data.performanceDate)}</dd>
+            </>
+          )}
+          {play.data.awards && play.data.awards.length > 0 && (
+            <>
+              <dt>Premios</dt>
+              <dd>
+                {play.data.awards.map((award) => (
+                  <span class="badge award-chip">{award}</span>
+                ))}
+              </dd>
+            </>
+          )}
+          {play.data.downloadUrl && (
+            <>
+              <dt>Texto</dt>
+              <dd>
+                <a
+                  class="btn btn--secondary"
+                  href={play.data.downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Descargar PDF
+                </a>
+              </dd>
+            </>
+          )}
+        </dl>
+      </aside>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .detail-header {
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .novel-lead {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    color: var(--color-ink-muted);
+  }
+
+  .play-cover {
+    width: 100%;
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .detail-meta .btn {
+    width: 100%;
+  }
+</style>

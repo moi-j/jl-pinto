@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import ArchiveHero from '../../components/ArchiveHero.astro';
+import NovelCard from '../../components/NovelCard.astro';
+import { sortNovelsByYear } from '../../utils/content';
+import { getCanonicalUrl } from '../../utils/seo';
+
+const novels = sortNovelsByYear(await getCollection('novels'));
+---
+
+<SiteLayout
+  title="Novelas — Juan Luis Pinto"
+  description="Las cinco novelas de Juan Luis Pinto: desde Virtudes un nombre de mujer hasta El viaje de Ami."
+  canonicalUrl={getCanonicalUrl('/novelas/')}
+  currentPath="/novelas/"
+>
+  <ArchiveHero
+    title="Novelas"
+    intro="Ficción histórica, retratos íntimos y narrativas que atraviesan Málaga, el Mediterráneo y la memoria colectiva."
+    count={novels.length}
+    countLabel="novelas"
+  />
+
+  <section class="section container">
+    <div class="grid-cards grid-cards--2">
+      {novels.map((novel) => (
+        <NovelCard
+          title={novel.data.title}
+          href={`/novelas/${novel.slug}/`}
+          summary={novel.data.summary}
+          year={novel.data.publishedYear}
+          coverImage={novel.data.coverImage}
+          purchaseUrl={novel.data.purchaseUrl}
+          featured={novel.data.featured}
+        />
+      ))}
+    </div>
+  </section>
+</SiteLayout>

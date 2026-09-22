@@ -1,0 +1,33 @@
+{
+  "name": "jl-pinto-astro-site",
+  "version": "1.0.0",
+  "description": "J.L. Pinto's literary website built with Astro",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "generate:redirects": "node scripts/generate-redirects.mjs",
+    "download:pdfs": "node scripts/download-pdfs.mjs",
+    "download:play-images": "node scripts/download-play-images.mjs",
+    "import:wordpress": "node scripts/import-wordpress.mjs",
+    "audit:content": "node scripts/audit-content.mjs"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.0.0",
+    "astro": "^4.0.0",
+    "cheerio": "^1.2.0",
+    "https-proxy-agent": "^9.1.0",
+    "node-fetch": "^2.7.0",
+    "turndown": "^7.2.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

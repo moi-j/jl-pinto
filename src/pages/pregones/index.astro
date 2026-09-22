@@ -1,0 +1,100 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import ArchiveHero from '../../components/ArchiveHero.astro';
+import { sortByPublishedDate, dateFormatter } from '../../utils/content';
+import { getCanonicalUrl } from '../../utils/seo';
+
+const pregones = sortByPublishedDate(await getCollection('proclamations'));
+---
+
+<SiteLayout
+  title="Pregones — Juan Luis Pinto"
+  description="Pregones y discursos culturales pronunciados por Juan Luis Pinto en Málaga."
+  canonicalUrl={getCanonicalUrl('/pregones/')}
+  currentPath="/pregones/"
+>
+  <ArchiveHero
+    title="Pregones"
+    intro="Palabras de festejo y reivindicación cultural en ferias, fiestas y actos institucionales."
+    count={pregones.length}
+    countLabel="pregones"
+  />
+
+  <section class="section container">
+    <ul class="pregon-archive">
+      {pregones.map((pregon) => (
+        <li class="pregon-archive__item">
+          <article>
+            <h2>
+              <a href={`/pregones/${pregon.slug}/`}>{pregon.data.title}</a>
+            </h2>
+            <p>{pregon.data.summary}</p>
+            <div class="pregon-archive__meta">
+              {pregon.data.eventDate && (
+                <time datetime={pregon.data.eventDate.toISOString()}>
+                  {dateFormatter.format(pregon.data.eventDate)}
+                </time>
+              )}
+              <a class="pregon-archive__link" href={`/pregones/${pregon.slug}/`}>
+                Leer pregón →
+              </a>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
+  </section>
+</SiteLayout>
+
+<style>
+  .pregon-archive {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--spacing-lg);
+  }
+
+  .pregon-archive__item {
+    padding: var(--spacing-xl);
+    background: var(--color-paper-elevated);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
+  }
+
+  .pregon-archive__item h2 {
+    margin: 0 0 var(--spacing-sm);
+    font-size: 1.5rem;
+  }
+
+  .pregon-archive__item h2 a {
+    text-decoration: none;
+    color: var(--color-ink);
+    border: none;
+  }
+
+  .pregon-archive__item p {
+    margin: 0 0 var(--spacing-md);
+    color: var(--color-ink-muted);
+  }
+
+  .pregon-archive__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    align-items: center;
+    font-size: var(--font-size-sm);
+  }
+
+  .pregon-archive__meta time {
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+
+  .pregon-archive__link {
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+  }
+</style>

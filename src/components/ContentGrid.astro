@@ -1,0 +1,73 @@
+---
+// Responsive grid layout for archive pages
+// Adapts from 1 column (mobile) to 2-3 columns (desktop)
+
+export interface Props {
+  columns?: 1 | 2 | 3;
+  gap?: 'sm' | 'md' | 'lg';
+  children?: any;
+}
+
+const { 
+  columns = 2,
+  gap = 'lg'
+} = Astro.props;
+
+const gapMap = {
+  sm: 'var(--spacing-md)',
+  md: 'var(--spacing-lg)',
+  lg: 'var(--spacing-xl)',
+};
+---
+
+<div class={`content-grid columns-${columns} gap-${gap}`}>
+  <slot />
+</div>
+
+<style define:vars={{ 
+  gridGap: gapMap[gap],
+  gridColumns: columns
+}}>
+  .content-grid {
+    display: grid;
+    gap: var(--gridGap);
+    max-width: var(--max-width-wide);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  /* Desktop: full columns as specified */
+  .columns-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .columns-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .columns-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Tablet: reduce to 2 columns */
+  @media (max-width: 1024px) {
+    .columns-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Mobile: single column */
+  @media (max-width: 768px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-lg);
+    }
+  }
+
+  /* Reduced motion: remove animations */
+  @media (prefers-reduced-motion: reduce) {
+    .content-grid > * {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,108 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../../components/SiteLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { getCanonicalUrl } from '../../utils/seo';
+
+export async function getStaticPaths() {
+  const novels = await getCollection('novels');
+  return novels.map((novel) => ({
+    params: { slug: novel.slug },
+    props: { novel },
+  }));
+}
+
+const { novel } = Astro.props;
+const { Content } = await novel.render();
+---
+
+<SiteLayout
+  title={`${novel.data.title} — Juan Luis Pinto`}
+  description={novel.data.summary}
+  canonicalUrl={getCanonicalUrl(`/novelas/${novel.slug}/`)}
+  ogImage={novel.data.coverImage}
+  currentPath="/novelas/"
+  type="article"
+>
+  <div class="container section">
+    <Breadcrumbs
+      items={[
+        { label: 'Inicio', href: '/' },
+        { label: 'Novelas', href: '/novelas/' },
+        { label: novel.data.title },
+      ]}
+    />
+
+    <div class="detail-layout">
+      <article>
+        <header class="detail-header">
+          <h1>{novel.data.title}</h1>
+          <p class="novel-lead">{novel.data.summary}</p>
+        </header>
+        <div class="prose">
+          <Content />
+        </div>
+      </article>
+
+      <aside class="detail-meta" aria-label="Información de la novela">
+        {novel.data.coverImage && (
+          <img
+            class="novel-cover"
+            src={novel.data.coverImage}
+            alt={`Portada de ${novel.data.title}`}
+            width="240"
+            loading="lazy"
+          />
+        )}
+        <dl>
+          {novel.data.publishedYear && (
+            <>
+              <dt>Año</dt>
+              <dd>{novel.data.publishedYear}</dd>
+            </>
+          )}
+          {novel.data.purchaseUrl && (
+            <>
+              <dt>Adquirir</dt>
+              <dd>
+                <a
+                  class="btn btn--primary"
+                  href={novel.data.purchaseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Comprar novela
+                </a>
+              </dd>
+            </>
+          )}
+        </dl>
+      </aside>
+    </div>
+  </div>
+</SiteLayout>
+
+<style>
+  .detail-header {
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .novel-lead {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--color-ink-muted);
+    max-width: var(--max-width-prose);
+  }
+
+  .novel-cover {
+    width: 100%;
+    margin-bottom: var(--spacing-lg);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .detail-meta .btn {
+    width: 100%;
+    margin-top: var(--spacing-xs);
+  }
+</style>

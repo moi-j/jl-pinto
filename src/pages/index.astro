@@ -1,0 +1,245 @@
+---
+import { getCollection } from 'astro:content';
+import SiteLayout from '../components/SiteLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import NovelCard from '../components/NovelCard.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import PlayCard from '../components/PlayCard.astro';
+import {
+  sortByPublishedDate,
+  sortNovelsByYear,
+  countWords,
+  cleanSummary,
+  dateFormatter,
+} from '../utils/content';
+import { getCanonicalUrl } from '../utils/seo';
+
+const [articles, novels, plays, proclamations] = await Promise.all([
+  getCollection('articles'),
+  getCollection('novels'),
+  getCollection('plays'),
+  getCollection('proclamations'),
+]);
+
+const featuredNovels = sortNovelsByYear(
+  novels.filter((n) => n.data.featured),
+).slice(0, 2);
+const latestArticles = sortByPublishedDate(articles).slice(0, 6);
+const allPlays = sortByPublishedDate(plays);
+const allPregones = sortByPublishedDate(proclamations);
+---
+
+<SiteLayout
+  title="Juan Luis Pinto — Novelista, dramaturgo y cronista"
+  description="Sitio oficial de Juan Luis Pinto (J.L. Pinto): novelas, teatro, artículos y pregones. Escritor malagueño."
+  canonicalUrl={getCanonicalUrl('/')}
+  currentPath="/"
+>
+  <Hero
+    tagline="Novelista, dramaturgo y cronista — Málaga"
+    intro="Desde la crónica periodística hasta la novela histórica y el teatro, Juan Luis Pinto explora la memoria, la ciudad y la condición humana con una prosa directa, mordaz y profundamente arraigada en Málaga."
+  />
+
+  <section class="section container">
+    <SectionHeader
+      title="Novelas destacadas"
+      intro="Dos obras recientes que condensan su mirada sobre la historia, la migración y las vidas que se cruzan en el Mediterráneo."
+      href="/novelas/"
+      linkLabel="Todas las novelas"
+    />
+    <div class="grid-cards grid-cards--2">
+      {featuredNovels.map((novel) => (
+        <NovelCard
+          title={novel.data.title}
+          href={`/novelas/${novel.slug}/`}
+          summary={novel.data.summary}
+          year={novel.data.publishedYear}
+          coverImage={novel.data.coverImage}
+          purchaseUrl={novel.data.purchaseUrl}
+          featured
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--band">
+    <div class="container">
+      <SectionHeader
+        title="Últimos artículos"
+        intro="Columnas de opinión y crónicas publicadas en prensa y medios digitales."
+        href="/articulos/"
+        linkLabel="Archivo completo"
+      />
+      <div class="grid-cards grid-cards--3">
+        {latestArticles.map((article) => (
+          <ArticleCard
+            title={article.data.title}
+            href={`/articulos/${article.slug}/`}
+            summary={article.data.summary}
+            publishedDate={article.data.publishedDate}
+            wordCount={countWords(article.body)}
+            featured={article.data.featured}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <SectionHeader
+      title="Teatro"
+      intro="Ocho piezas dramáticas, desde la comedia social hasta el premio Ciudad de Málaga en el Certamen Suso de Marcos."
+      href="/teatro/"
+    />
+    <div class="grid-cards grid-cards--4">
+      {allPlays.map((play) => (
+        <PlayCard
+          title={play.data.title}
+          href={`/teatro/${play.slug}/`}
+          summary={cleanSummary(
+            play.data.summary,
+            play.data.title,
+            'Obra teatral de {title}.',
+          )}
+          year={play.data.publishedYear ?? play.data.publishedDate?.getFullYear()}
+          awards={play.data.awards}
+          coverImage={play.data.coverImage}
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--band">
+    <div class="container">
+      <SectionHeader
+        title="Pregones"
+        intro="Discursos pronunciados en actos culturales y festividades malagueñas."
+        href="/pregones/"
+      />
+      <ul class="pregon-list">
+        {allPregones.map((pregon) => (
+          <li class="pregon-list__item">
+            <div>
+              <h3>
+                <a href={`/pregones/${pregon.slug}/`}>{pregon.data.title}</a>
+              </h3>
+              <p>{pregon.data.summary}</p>
+            </div>
+            {pregon.data.eventDate && (
+              <time datetime={pregon.data.eventDate.toISOString()}>
+                {dateFormatter.format(pregon.data.eventDate)}
+              </time>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container">
+    <SectionHeader title="Explorar el archivo" intro="Accede a cada sección del sitio." />
+    <div class="grid-cards grid-cards--4 explore-grid">
+      <a class="explore-card" href="/novelas/">
+        <span class="explore-card__count">{novels.length}</span>
+        <span class="explore-card__label">Novelas</span>
+      </a>
+      <a class="explore-card" href="/teatro/">
+        <span class="explore-card__count">{plays.length}</span>
+        <span class="explore-card__label">Obras teatrales</span>
+      </a>
+      <a class="explore-card" href="/articulos/">
+        <span class="explore-card__count">{articles.length}</span>
+        <span class="explore-card__label">Artículos</span>
+      </a>
+      <a class="explore-card" href="/pregones/">
+        <span class="explore-card__count">{proclamations.length}</span>
+        <span class="explore-card__label">Pregones</span>
+      </a>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .pregon-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--spacing-md);
+  }
+
+  .pregon-list__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: var(--color-paper-elevated);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
+  }
+
+  .pregon-list__item h3 {
+    margin: 0 0 var(--spacing-xs);
+    font-size: 1.25rem;
+  }
+
+  .pregon-list__item h3 a {
+    text-decoration: none;
+    color: var(--color-ink);
+    border: none;
+  }
+
+  .pregon-list__item p {
+    margin: 0;
+    color: var(--color-ink-soft);
+    font-size: var(--font-size-sm);
+  }
+
+  .pregon-list__item time {
+    flex-shrink: 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .explore-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid var(--color-border-light);
+    background: var(--color-paper-elevated);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .explore-card:hover {
+    border-color: var(--color-accent-gold);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .explore-card__count {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    color: var(--color-ink);
+    line-height: 1;
+  }
+
+  .explore-card__label {
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-ink-soft);
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .pregon-list__item {
+      flex-direction: column;
+    }
+  }
+</style>

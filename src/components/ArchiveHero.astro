@@ -1,0 +1,59 @@
+---
+interface Props {
+  title: string;
+  intro: string;
+  count?: number;
+  countLabel?: string;
+}
+
+const { title, intro, count, countLabel = 'obras' } = Astro.props;
+---
+
+<header class="archive-hero container">
+  <p class="archive-hero__eyebrow">Archivo</p>
+  <h1>{title}</h1>
+  <p class="archive-hero__intro">{intro}</p>
+  {typeof count === 'number' && (
+    <p class="archive-hero__count">
+      <span class="badge">{count}</span> {countLabel}
+    </p>
+  )}
+</header>
+
+<style>
+  .archive-hero {
+    padding: var(--spacing-3xl) var(--container-padding) var(--spacing-2xl);
+    max-width: var(--max-width-wide);
+    margin: 0 auto;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .archive-hero__eyebrow {
+    margin: 0 0 var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .archive-hero h1 {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .archive-hero__intro {
+    max-width: 42rem;
+    margin: 0 0 var(--spacing-lg);
+    font-size: 1.05rem;
+    color: var(--color-ink-muted);
+  }
+
+  .archive-hero__count {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-ink-soft);
+  }
+</style>

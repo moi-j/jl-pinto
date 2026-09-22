@@ -1,0 +1,214 @@
+---
+import SiteLayout from '../components/SiteLayout.astro';
+import { getCollection } from 'astro:content';
+import sobreMiRaw from '../data/sobre-mi.md?raw';
+import { sortNovelsByYear } from '../utils/content';
+import { getCanonicalUrl } from '../utils/seo';
+
+const paragraphs = sobreMiRaw
+  .split(/\n\n+/)
+  .map((p) => p.trim())
+  .filter(Boolean);
+
+const [novels, plays, articles, pregones] = await Promise.all([
+  getCollection('novels'),
+  getCollection('plays'),
+  getCollection('articles'),
+  getCollection('proclamations'),
+]);
+
+const novelList = sortNovelsByYear(novels);
+---
+
+<SiteLayout
+  title="Sobre mí — Juan Luis Pinto"
+  description="Biografía de Juan Luis Pinto: novelista, dramaturgo y cronista nacido en Málaga en 1957."
+  canonicalUrl={getCanonicalUrl('/sobre-mi/')}
+  currentPath="/sobre-mi/"
+>
+  <header class="about-hero container">
+    <p class="about-hero__eyebrow">Biografía</p>
+    <h1>Sobre mí</h1>
+    <p class="about-hero__lead">
+      Juan Luis Pinto (Málaga, 1957) — novelista, cronista, articulista, guionista y dramaturgo.
+    </p>
+  </header>
+
+  <section class="section container about-grid">
+    <figure class="about-photo">
+      <img
+        src="/images/author/jlpinto.jpg"
+        alt="Retrato de Juan Luis Pinto"
+        width="918"
+        height="822"
+        loading="lazy"
+      />
+    </figure>
+    <div class="prose about-bio">
+      {paragraphs.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </div>
+  </section>
+
+  <section class="section section--band">
+    <div class="container">
+      <h2>Obra en cifras</h2>
+      <div class="grid-cards grid-cards--4 stats-grid">
+        <div class="stat-card">
+          <span class="stat-card__n">{novels.length}</span>
+          <span class="stat-card__l">Novelas</span>
+          <a href="/novelas/">Ver novelas</a>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__n">{plays.length}</span>
+          <span class="stat-card__l">Obras teatrales</span>
+          <a href="/teatro/">Ver teatro</a>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__n">{articles.length}</span>
+          <span class="stat-card__l">Artículos</span>
+          <a href="/articulos/">Ver artículos</a>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__n">{pregones.length}</span>
+          <span class="stat-card__l">Pregones</span>
+          <a href="/pregones/">Ver pregones</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container">
+    <h2>Novelas</h2>
+    <ul class="timeline">
+      {novelList.map((novel) => (
+        <li>
+          <span class="timeline__year">{novel.data.publishedYear ?? '—'}</span>
+          <a href={`/novelas/${novel.slug}/`}>{novel.data.title}</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</SiteLayout>
+
+<style>
+  .about-hero {
+    padding: var(--spacing-3xl) var(--container-padding) var(--spacing-xl);
+    max-width: var(--max-width-wide);
+    margin: 0 auto;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .about-hero__eyebrow {
+    margin: 0 0 var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .about-hero__lead {
+    max-width: 40rem;
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    color: var(--color-ink-muted);
+    margin: 0;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 16rem 1fr;
+    gap: var(--spacing-3xl);
+    align-items: start;
+  }
+
+  .about-photo {
+    margin: 0;
+    position: sticky;
+    top: 5.5rem;
+  }
+
+  .about-photo img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .stats-grid {
+    margin-top: var(--spacing-xl);
+  }
+
+  .stat-card {
+    padding: var(--spacing-lg);
+    text-align: center;
+    background: var(--color-paper-elevated);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
+  }
+
+  .stat-card__n {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    color: var(--color-ink);
+  }
+
+  .stat-card__l {
+    display: block;
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-ink-soft);
+  }
+
+  .stat-card a {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: var(--spacing-xl) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--spacing-md);
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: var(--spacing-lg);
+    align-items: baseline;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .timeline__year {
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+
+  .timeline a {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    text-decoration: none;
+    border: none;
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .about-photo {
+      position: static;
+      max-width: 14rem;
+    }
+  }
+</style>

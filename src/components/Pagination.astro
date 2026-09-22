@@ -1,0 +1,128 @@
+---
+interface Props {
+  currentPage: number;
+  lastPage: number;
+  prevUrl?: string;
+  nextUrl?: string;
+  /** Archive root with trailing slash, e.g. `/articulos/` */
+  basePath: string;
+}
+
+const { currentPage, lastPage, prevUrl, nextUrl, basePath } = Astro.props;
+
+function pageHref(page: number) {
+  return page === 1 ? basePath : `${basePath}${page}/`;
+}
+
+const pageNumbers = Array.from({ length: lastPage }, (_, i) => i + 1);
+---
+
+{
+  lastPage > 1 && (
+<nav class="pagination" aria-label="Paginación">
+  {
+    prevUrl ? (
+      <a class="pagination__edge" href={prevUrl}>
+        ← Anterior
+      </a>
+    ) : (
+      <span class="pagination__edge pagination__edge--disabled" aria-hidden="true">
+        ← Anterior
+      </span>
+    )
+  }
+
+  <ol class="pagination__pages">
+    {
+      pageNumbers.map((page) => (
+        <li>
+          {page === currentPage ? (
+            <span class="pagination__page pagination__page--current" aria-current="page">
+              {page}
+            </span>
+          ) : (
+            <a class="pagination__page" href={pageHref(page)}>
+              {page}
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+
+  {
+    nextUrl ? (
+      <a class="pagination__edge" href={nextUrl}>
+        Siguiente →
+      </a>
+    ) : (
+      <span class="pagination__edge pagination__edge--disabled" aria-hidden="true">
+        Siguiente →
+      </span>
+    )
+  }
+</nav>
+  )
+}
+
+<style>
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md) var(--spacing-lg);
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .pagination__pages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pagination__page,
+  .pagination__edge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    padding: 0.4rem 0.65rem;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink-muted);
+    background: var(--color-paper-elevated);
+  }
+
+  .pagination__edge {
+    min-width: auto;
+  }
+
+  .pagination__page:hover,
+  .pagination__edge:hover {
+    border-color: var(--color-border);
+    color: var(--color-accent-terracotta);
+  }
+
+  .pagination__page--current {
+    border-color: var(--color-accent-gold);
+    color: var(--color-ink);
+    background: var(--color-accent-soft);
+  }
+
+  .pagination__edge--disabled {
+    opacity: 0.45;
+    border-color: transparent;
+    background: transparent;
+  }
+</style>
