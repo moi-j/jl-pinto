@@ -4,7 +4,6 @@
 /category/pregones/ /pregones/ 301
 /sobre-mi/ /sobre-mi/ 200
 /buscar/ / 301
-/articulos/* /articulos/:splat 301
 /999-y-1000/ /articulos/999-y-1000/ 301
 /a-las-cavernas-en-cinco-segundos/ /articulos/a-las-cavernas-en-cinco-segundos/ 301
 /a-modo-de-telegrama/ /articulos/a-modo-de-telegrama/ 301

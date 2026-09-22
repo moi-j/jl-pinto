@@ -25,9 +25,6 @@ async function generateRedirects() {
       // Common legacy paths
       '/sobre-mi/ /sobre-mi/ 200',
       '/buscar/ / 301',
-      
-      // Catch-all for legacy article structure (if needed)
-      '/articulos/* /articulos/:splat 301',
     ];
 
     // Try to load content files to detect legacy URLs
