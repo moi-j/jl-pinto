@@ -1,8 +1,9 @@
 /* J.L. Pinto — editorial literary design system */
 
 :root {
-  --font-serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  --font-sans: 'Source Sans 3', system-ui, sans-serif;
+  --font-serif: 'Cormorant Garamond', 'Cormorant Garamond Fallback', Georgia, 'Times New Roman',
+    serif;
+  --font-sans: 'Source Sans 3', 'Source Sans 3 Fallback', system-ui, sans-serif;
 
   --font-size-base: 1.0625rem;
   --line-height-base: 1.75;

@@ -1,5 +1,24 @@
 /* Self-hosted fonts — woff2 only, subsets used on the site (latin + latin-ext for Spanish) */
 
+/* Metric-adjusted fallbacks: closer size to webfonts while files load (font-display: swap). */
+@font-face {
+  font-family: 'Source Sans 3 Fallback';
+  src: local('Segoe UI'), local('Arial');
+  size-adjust: 101%;
+  ascent-override: 92%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Cormorant Garamond Fallback';
+  src: local('Georgia');
+  size-adjust: 109%;
+  ascent-override: 82%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
 @font-face {
   font-family: 'Cormorant Garamond';
   font-style: normal;

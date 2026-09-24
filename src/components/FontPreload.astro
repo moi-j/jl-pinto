@@ -1,0 +1,25 @@
+---
+/**
+ * Start downloading critical webfonts before layout CSS is parsed (reduces first-visit FOUT).
+ * crossorigin is required for preload to match @font-face CORS mode.
+ */
+import sourceSans400Latin from '@fontsource/source-sans-3/files/source-sans-3-latin-400-normal.woff2?url';
+import sourceSans600Latin from '@fontsource/source-sans-3/files/source-sans-3-latin-600-normal.woff2?url';
+import sourceSans400LatinExt from '@fontsource/source-sans-3/files/source-sans-3-latin-ext-400-normal.woff2?url';
+import cormorant600Latin from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2?url';
+import cormorant600LatinExt from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-ext-600-normal.woff2?url';
+
+const preloads = [
+  sourceSans400Latin,
+  sourceSans600Latin,
+  sourceSans400LatinExt,
+  cormorant600Latin,
+  cormorant600LatinExt,
+];
+---
+
+{
+  preloads.map((href) => (
+    <link rel="preload" href={href} as="font" type="font/woff2" crossorigin="anonymous" />
+  ))
+}
