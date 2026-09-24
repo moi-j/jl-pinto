@@ -1,0 +1,209 @@
+---
+import { buildArticleShareLinks } from '../utils/share';
+
+interface Props {
+  url: string;
+  title: string;
+}
+
+const { url, title } = Astro.props;
+const links = buildArticleShareLinks(url, title);
+---
+
+<div
+  class="article-share"
+  data-share-root
+  data-share-url={url}
+  data-share-title={title}
+>
+  <p class="article-share__label">Compartir</p>
+  <ul class="article-share__list">
+    <li>
+      <a
+        class="article-share__link"
+        href={links.whatsapp}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        WhatsApp
+      </a>
+    </li>
+    <li>
+      <a
+        class="article-share__link"
+        href={links.twitter}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        X
+      </a>
+    </li>
+    <li>
+      <a
+        class="article-share__link"
+        href={links.facebook}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Facebook
+      </a>
+    </li>
+    <li>
+      <a
+        class="article-share__link"
+        href={links.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        LinkedIn
+      </a>
+    </li>
+  </ul>
+  <button type="button" class="btn btn--secondary article-share__native" hidden data-share-native>
+    Compartir…
+  </button>
+  <button type="button" class="article-share__copy" data-share-copy>
+    Copiar enlace
+  </button>
+  <p class="article-share__status" hidden data-share-status role="status">
+    Enlace copiado
+  </p>
+</div>
+
+<script is:inline data-astro-rerun>
+  (function initArticleShare() {
+    const roots = document.querySelectorAll('[data-share-root]');
+    roots.forEach((root) => {
+      const url = root.getAttribute('data-share-url');
+      const title = root.getAttribute('data-share-title');
+      if (!url) return;
+
+      const nativeBtn = root.querySelector('[data-share-native]');
+      if (nativeBtn && typeof navigator !== 'undefined' && navigator.share) {
+        nativeBtn.hidden = false;
+        nativeBtn.addEventListener('click', async () => {
+          try {
+            await navigator.share({ url, title: title || undefined });
+          } catch (err) {
+            if (err && err.name === 'AbortError') return;
+          }
+        });
+      }
+
+      const copyBtn = root.querySelector('[data-share-copy]');
+      const status = root.querySelector('[data-share-status]');
+      if (!copyBtn) return;
+
+      copyBtn.addEventListener('click', async () => {
+        let copied = false;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            copied = true;
+          }
+        } catch {
+          copied = false;
+        }
+
+        if (!copied) {
+          const input = document.createElement('textarea');
+          input.value = url;
+          input.setAttribute('readonly', '');
+          input.style.position = 'absolute';
+          input.style.left = '-9999px';
+          document.body.appendChild(input);
+          input.select();
+          copied = document.execCommand('copy');
+          document.body.removeChild(input);
+        }
+
+        if (status && copied) {
+          status.hidden = false;
+          window.setTimeout(() => {
+            status.hidden = true;
+          }, 2500);
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  .article-share {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .article-share__label {
+    margin: 0 0 var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .article-share__list {
+    list-style: none;
+    margin: 0 0 var(--spacing-md);
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+
+  .article-share__link {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--color-ink);
+    background: var(--color-paper-elevated);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .article-share__link:hover {
+    color: var(--color-accent-terracotta);
+    border-color: var(--color-border);
+  }
+
+  .article-share__native {
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .article-share__copy {
+    display: block;
+    width: 100%;
+    padding: 0.45rem 0.75rem;
+    font: inherit;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    background: transparent;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+  }
+
+  .article-share__copy:hover {
+    color: var(--color-ink);
+    border-color: var(--color-accent-gold);
+  }
+
+  .article-share__status {
+    margin: var(--spacing-sm) 0 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+</style>

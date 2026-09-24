@@ -172,7 +172,7 @@ a:hover {
   width: 100%;
   max-width: var(--max-width-wide);
   margin: 0 auto;
-  padding: 0 var(--container-padding);
+  padding-inline: var(--container-padding);
 }
 
 main {
@@ -181,11 +181,11 @@ main {
 }
 
 .section {
-  padding: var(--spacing-3xl) 0;
+  padding-block: var(--spacing-3xl);
 }
 
 .section--tight {
-  padding: var(--spacing-2xl) 0;
+  padding-block: var(--spacing-2xl);
 }
 
 .section--band {
@@ -250,6 +250,19 @@ main {
   line-height: 1.85;
 }
 
+.prose :is(img, video, iframe) {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose img {
+  display: block;
+}
+
+.prose img + img {
+  margin-top: var(--spacing-lg);
+}
+
 .prose :is(h2, h3) {
   margin-top: var(--spacing-2xl);
   margin-bottom: var(--spacing-md);
@@ -279,6 +292,10 @@ main {
   grid-template-columns: minmax(0, 1fr) 16rem;
   gap: var(--spacing-3xl);
   align-items: start;
+}
+
+.detail-layout > article {
+  min-width: 0;
 }
 
 .detail-meta {

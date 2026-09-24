@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ArticleShare from '../../components/ArticleShare.astro';
 import { sortByPublishedDate, dateFormatter, isPublished } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
@@ -23,12 +24,14 @@ const formattedDate = article.data.publishedDate
 const relatedArticles = sortByPublishedDate(await getCollection('articles', isPublished))
   .filter((a) => a.slug !== article.slug)
   .slice(0, 3);
+
+const articleUrl = getCanonicalUrl(`/articulos/${article.slug}/`);
 ---
 
 <SiteLayout
   title={`${article.data.title} — Juan Luis Pinto`}
   description={article.data.summary}
-  canonicalUrl={getCanonicalUrl(`/articulos/${article.slug}/`)}
+  canonicalUrl={articleUrl}
   currentPath="/articulos/"
   type="article"
   publishedDate={article.data.publishedDate}
@@ -69,6 +72,7 @@ const relatedArticles = sortByPublishedDate(await getCollection('articles', isPu
         <p class="detail-meta__author">
           Por <a href="/sobre-mi/">Juan Luis Pinto</a>
         </p>
+        <ArticleShare url={articleUrl} title={article.data.title} />
       </aside>
     </div>
 

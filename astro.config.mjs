@@ -7,6 +7,13 @@ export default defineConfig({
   site: 'https://jlpinto.com',
   output: 'static',
   compressHTML: true,
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
+  build: {
+    inlineStylesheets: 'never',
+  },
   integrations: [],
   markdown: {
     rehypePlugins: [

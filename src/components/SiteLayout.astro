@@ -1,22 +1,6 @@
 ---
-import '@fontsource/cormorant-garamond/latin-500.css';
-import '@fontsource/cormorant-garamond/latin-ext-500.css';
-import '@fontsource/cormorant-garamond/latin-600.css';
-import '@fontsource/cormorant-garamond/latin-ext-600.css';
-import '@fontsource/cormorant-garamond/latin-700.css';
-import '@fontsource/cormorant-garamond/latin-ext-700.css';
-import '@fontsource/cormorant-garamond/latin-500-italic.css';
-import '@fontsource/cormorant-garamond/latin-ext-500-italic.css';
-import '@fontsource/source-sans-3/latin-400.css';
-import '@fontsource/source-sans-3/latin-ext-400.css';
-import '@fontsource/source-sans-3/latin-500.css';
-import '@fontsource/source-sans-3/latin-ext-500.css';
-import '@fontsource/source-sans-3/latin-600.css';
-import '@fontsource/source-sans-3/latin-ext-600.css';
-import '@fontsource/source-sans-3/latin-700.css';
-import '@fontsource/source-sans-3/latin-ext-700.css';
-import '@fontsource/source-sans-3/latin-400-italic.css';
-import '@fontsource/source-sans-3/latin-ext-400-italic.css';
+import { ViewTransitions } from 'astro:transitions';
+import '../styles/fonts.css';
 import '../styles/global.css';
 import SiteHeader from './SiteHeader.astro';
 import Footer from './Footer.astro';
@@ -57,6 +41,7 @@ const {
       type={type}
       publishedDate={publishedDate}
     />
+    <ViewTransitions />
     <slot name="head" />
   </head>
   <body>
