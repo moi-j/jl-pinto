@@ -221,6 +221,11 @@ main {
   color: #fff;
 }
 
+a.btn--primary:visited,
+a.btn--primary:visited:hover {
+  color: #fff;
+}
+
 .btn--secondary {
   background: transparent;
   color: var(--color-ink);
@@ -229,6 +234,14 @@ main {
 
 .btn--secondary:hover {
   border-color: var(--color-accent-terracotta);
+  color: var(--color-accent-terracotta);
+}
+
+a.btn--secondary:visited {
+  color: var(--color-ink);
+}
+
+a.btn--secondary:visited:hover {
   color: var(--color-accent-terracotta);
 }
 
