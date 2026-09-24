@@ -24,17 +24,43 @@ export const SITE_URL = 'https://jlpinto.com';
 
 export const DEFAULT_OG_IMAGE_PATH = '/og-image.jpg';
 
+const SITE_HOSTS = new Set(['jlpinto.com', 'www.jlpinto.com']);
+
 export function getCanonicalUrl(path: string): string {
+  if (path.startsWith('https://')) {
+    try {
+      const url = new URL(path);
+      if (SITE_HOSTS.has(url.hostname)) return url.href;
+    } catch {
+      return `${SITE_URL}/`;
+    }
+    return `${SITE_URL}/`;
+  }
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  if (cleanPath.startsWith('//')) return `${SITE_URL}/`;
   return `${SITE_URL}${cleanPath}`;
 }
 
 /** Absolute URL for Open Graph / Twitter images (required by Facebook, WhatsApp, etc.). */
 export function getAbsoluteAssetUrl(path: string): string {
-  if (path.startsWith('http://') || path.startsWith('https://')) {
-    return path;
+  if (path.startsWith('https://')) {
+    try {
+      const url = new URL(path);
+      if (SITE_HOSTS.has(url.hostname)) return path;
+    } catch {
+      return getCanonicalUrl(DEFAULT_OG_IMAGE_PATH);
+    }
+    return getCanonicalUrl(DEFAULT_OG_IMAGE_PATH);
+  }
+  if (!path.startsWith('/') || path.startsWith('//')) {
+    return getCanonicalUrl(DEFAULT_OG_IMAGE_PATH);
   }
   return getCanonicalUrl(path);
+}
+
+/** JSON-LD for inline <script> — escape < so titles cannot break out of the tag. */
+export function toJsonLd(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
 }
 
 /**

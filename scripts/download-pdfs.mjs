@@ -4,6 +4,7 @@ import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fetch from 'node-fetch';
+import { isAllowedSiteUrl } from './lib/site-url.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,9 +23,15 @@ function isPdfBuffer(buf) {
 }
 
 async function fetchPdfBuffer(url) {
+  if (!isAllowedSiteUrl(url)) {
+    throw new Error(`Blocked host: ${url}`);
+  }
   const res = await fetch(url, { redirect: 'follow' });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status}`);
+  }
+  if (!isAllowedSiteUrl(res.url)) {
+    throw new Error(`Redirected off-site: ${res.url}`);
   }
   const buf = Buffer.from(await res.arrayBuffer());
   if (!isPdfBuffer(buf)) {
@@ -34,32 +41,28 @@ async function fetchPdfBuffer(url) {
 }
 
 async function downloadPdf(url) {
-  try {
-    return await fetchPdfBuffer(url);
-  } catch (firstError) {
-    if (url.startsWith('https://')) {
-      const httpUrl = url.replace(/^https:\/\//, 'http://');
-      try {
-        return await fetchPdfBuffer(httpUrl);
-      } catch {
-        throw firstError;
-      }
-    }
-    throw firstError;
-  }
+  return fetchPdfBuffer(url);
 }
 
 const WP_PDF_IN_HTML =
   /https?:\/\/(?:www\.)?jlpinto\.com\/wp-content\/uploads\/[^"'\\s]+?\.pdf/gi;
 
 async function discoverPdfUrlFromLegacy(legacyUrl) {
+  if (!isAllowedSiteUrl(legacyUrl)) {
+    throw new Error(`Blocked legacy URL: ${legacyUrl}`);
+  }
   const res = await fetch(legacyUrl, { redirect: 'follow' });
   if (!res.ok) {
     throw new Error(`Legacy page HTTP ${res.status}`);
   }
+  if (!isAllowedSiteUrl(res.url)) {
+    throw new Error(`Legacy page redirected off-site: ${res.url}`);
+  }
   const html = await res.text();
   const match = html.match(WP_PDF_IN_HTML);
-  return match?.[0] ?? null;
+  const found = match?.[0] ?? null;
+  if (found && !isAllowedSiteUrl(found)) return null;
+  return found;
 }
 
 async function readValidLocalPdf(diskPath) {
@@ -97,6 +100,9 @@ async function processFile(contentPath, publicFolder) {
 
   let remoteUrl =
     frontmatter.match(/^downloadUrl:\s*"(https?:\/\/[^"]+\.pdf)"/m)?.[1] ?? null;
+  if (remoteUrl && !isAllowedSiteUrl(remoteUrl)) {
+    remoteUrl = null;
+  }
 
   const legacyUrl = frontmatter.match(/^legacyUrl:\s*"([^"]+)"/m)?.[1] ?? null;
 

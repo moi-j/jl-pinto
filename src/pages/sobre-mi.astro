@@ -2,7 +2,7 @@
 import SiteLayout from '../components/SiteLayout.astro';
 import { getCollection } from 'astro:content';
 import sobreMiRaw from '../data/sobre-mi.md?raw';
-import { sortNovelsByYear } from '../utils/content';
+import { sortNovelsByYear, isPublished } from '../utils/content';
 import { getCanonicalUrl } from '../utils/seo';
 
 const paragraphs = sobreMiRaw
@@ -11,10 +11,10 @@ const paragraphs = sobreMiRaw
   .filter(Boolean);
 
 const [novels, plays, articles, pregones] = await Promise.all([
-  getCollection('novels'),
-  getCollection('plays'),
-  getCollection('articles'),
-  getCollection('proclamations'),
+  getCollection('novels', isPublished),
+  getCollection('plays', isPublished),
+  getCollection('articles', isPublished),
+  getCollection('proclamations', isPublished),
 ]);
 
 const novelList = sortNovelsByYear(novels);

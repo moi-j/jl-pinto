@@ -2,11 +2,11 @@
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { cleanSummary, dateFormatter } from '../../utils/content';
+import { cleanSummary, dateFormatter, isPublished } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
 export async function getStaticPaths() {
-  const plays = await getCollection('plays');
+  const plays = await getCollection('plays', isPublished);
   return plays.map((play) => ({
     params: { slug: play.slug },
     props: { play },

@@ -2,10 +2,10 @@
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import ArchiveHero from '../../components/ArchiveHero.astro';
-import { sortByPublishedDate, dateFormatter } from '../../utils/content';
+import { sortByPublishedDate, dateFormatter, isPublished } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
-const pregones = sortByPublishedDate(await getCollection('proclamations'));
+const pregones = sortByPublishedDate(await getCollection('proclamations', isPublished));
 ---
 
 <SiteLayout

@@ -3,10 +3,10 @@ import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import ArchiveHero from '../../components/ArchiveHero.astro';
 import PlayCard from '../../components/PlayCard.astro';
-import { sortByPublishedDate, cleanSummary } from '../../utils/content';
+import { sortByPublishedDate, cleanSummary, isPublished } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
-const plays = sortByPublishedDate(await getCollection('plays'));
+const plays = sortByPublishedDate(await getCollection('plays', isPublished));
 ---
 
 <SiteLayout

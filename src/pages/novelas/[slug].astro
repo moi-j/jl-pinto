@@ -3,9 +3,10 @@ import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { getCanonicalUrl } from '../../utils/seo';
+import { isPublished } from '../../utils/content';
 
 export async function getStaticPaths() {
-  const novels = await getCollection('novels');
+  const novels = await getCollection('novels', isPublished);
   return novels.map((novel) => ({
     params: { slug: novel.slug },
     props: { novel },

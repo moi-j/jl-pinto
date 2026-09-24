@@ -1,10 +1,11 @@
 import { getCollection } from 'astro:content';
+import { isPublished } from '../utils/content';
 
 export async function GET() {
-  const articles = await getCollection('articles');
-  const novels = await getCollection('novels');
-  const plays = await getCollection('plays');
-  const proclamations = await getCollection('proclamations');
+  const articles = await getCollection('articles', isPublished);
+  const novels = await getCollection('novels', isPublished);
+  const plays = await getCollection('plays', isPublished);
+  const proclamations = await getCollection('proclamations', isPublished);
 
   const today = new Date().toISOString().split('T')[0];
 

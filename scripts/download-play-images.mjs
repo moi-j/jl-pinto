@@ -4,6 +4,7 @@ import { promises as fs } from 'fs';
 import { dirname, extname, join } from 'path';
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch';
+import { isAllowedSiteUrl } from './lib/site-url.mjs';
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CONTENT_DIR = join(projectRoot, 'src', 'content', 'plays');
@@ -34,9 +35,9 @@ function parseCategoryPage(html) {
   for (const article of articles) {
     const href = (article.match(/<h2[^>]*>\s*<a[^>]+href="([^"]+)"/i) || [])[1];
     const img = (article.match(/<img[^>]+src="([^"]+)"/i) || [])[1];
-    if (!href) continue;
+    if (!href || !isAllowedSiteUrl(href)) continue;
     const slug = slugFromLegacyUrl(href);
-    if (img) {
+    if (img && isAllowedSiteUrl(img)) {
       bySlug.set(slug, img);
     }
     const title = decodeHtml(
@@ -51,9 +52,15 @@ function parseCategoryPage(html) {
 }
 
 async function downloadImage(url, destPath) {
+  if (!isAllowedSiteUrl(url)) {
+    throw new Error(`Blocked host: ${url}`);
+  }
   const res = await fetch(url, { redirect: 'follow' });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status} for ${url}`);
+  }
+  if (!isAllowedSiteUrl(res.url)) {
+    throw new Error(`Redirected off-site: ${res.url}`);
   }
   const buf = Buffer.from(await res.arrayBuffer());
   if (buf.length < 500) {
@@ -84,8 +91,18 @@ async function updateFrontmatter(filePath, coverImage) {
 }
 
 async function main() {
+  if (!isAllowedSiteUrl(CATEGORY_URL)) {
+    throw new Error(`Blocked category URL: ${CATEGORY_URL}`);
+  }
   console.log(`Fetching ${CATEGORY_URL}\n`);
-  const html = await fetch(CATEGORY_URL).then((r) => r.text());
+  const res = await fetch(CATEGORY_URL, { redirect: 'follow' });
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status} for ${CATEGORY_URL}`);
+  }
+  if (!isAllowedSiteUrl(res.url)) {
+    throw new Error(`Category page redirected off-site: ${res.url}`);
+  }
+  const html = await res.text();
   const imagesBySlug = parseCategoryPage(html);
 
   await fs.mkdir(IMAGES_DIR, { recursive: true });
@@ -97,7 +114,7 @@ async function main() {
   for (const file of files) {
     const slug = file.replace(/\.md$/, '');
     const remoteUrl = imagesBySlug.get(slug);
-    if (!remoteUrl) {
+    if (!remoteUrl || !isAllowedSiteUrl(remoteUrl)) {
       skipped++;
       continue;
     }

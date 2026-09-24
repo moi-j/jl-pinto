@@ -12,14 +12,15 @@ import {
   countWords,
   cleanSummary,
   dateFormatter,
+  isPublished,
 } from '../utils/content';
 import { getCanonicalUrl } from '../utils/seo';
 
 const [articles, novels, plays, proclamations] = await Promise.all([
-  getCollection('articles'),
-  getCollection('novels'),
-  getCollection('plays'),
-  getCollection('proclamations'),
+  getCollection('articles', isPublished),
+  getCollection('novels', isPublished),
+  getCollection('plays', isPublished),
+  getCollection('proclamations', isPublished),
 ]);
 
 const featuredNovels = sortNovelsByYear(

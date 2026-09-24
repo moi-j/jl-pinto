@@ -5,11 +5,11 @@ import SiteLayout from '../../components/SiteLayout.astro';
 import ArchiveHero from '../../components/ArchiveHero.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import Pagination from '../../components/Pagination.astro';
-import { sortByPublishedDate, countWords } from '../../utils/content';
+import { sortByPublishedDate, countWords, isPublished } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const articles = sortByPublishedDate(await getCollection('articles'));
+  const articles = sortByPublishedDate(await getCollection('articles', isPublished));
   return paginate(articles, { pageSize: 10 });
 }) satisfies GetStaticPaths;
 

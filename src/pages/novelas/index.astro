@@ -3,10 +3,10 @@ import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import ArchiveHero from '../../components/ArchiveHero.astro';
 import NovelCard from '../../components/NovelCard.astro';
-import { sortNovelsByYear } from '../../utils/content';
+import { sortNovelsByYear, isPublished } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
-const novels = sortNovelsByYear(await getCollection('novels'));
+const novels = sortNovelsByYear(await getCollection('novels', isPublished));
 ---
 
 <SiteLayout

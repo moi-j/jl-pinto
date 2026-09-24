@@ -1,9 +1,10 @@
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
 import rss from '@astrojs/rss';
+import { isPublished } from '../utils/content';
 
 export async function GET(context: APIContext) {
-  const articles = await getCollection('articles');
+  const articles = await getCollection('articles', isPublished);
 
   // Sort by published date, most recent first
   const sortedArticles = articles.sort((a, b) => {

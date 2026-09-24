@@ -7,6 +7,10 @@ type DatedEntry = {
   };
 };
 
+export function isPublished(entry: { data: { draft?: boolean } }): boolean {
+  return entry.data.draft !== true;
+}
+
 function entryTimestamp(entry: DatedEntry): number {
   if (entry.data.publishedDate) return entry.data.publishedDate.getTime();
   if (entry.data.eventDate) return entry.data.eventDate.getTime();

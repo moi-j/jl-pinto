@@ -3,7 +3,7 @@ title: "El Vigia Puerta Oscura"
 publishedYear: 2015
 summary: "La miseria y las epidemias no pueden con la fuerza y los sueños de Pedro, un niño de la calle, cuya desbordante imaginación y enorme tenacidad le permiten sobrevivir intentando forjarse un futuro halagüeño. En un escenario de máxima pobreza, de revoluciones obreras a la vez que d"
 legacyUrl: "https://jlpinto.com/#el-vigia-puerta-oscura"
-purchaseUrl: "http://www.librerialuces.com/es/libro/el-vigia-puerta-oscura_492514"
+purchaseUrl: "https://www.librerialuces.com/es/libro/el-vigia-puerta-oscura_492514"
 coverImage: "/images/novelas/el-vigia-puerta-oscura.jpg"
 ---
 

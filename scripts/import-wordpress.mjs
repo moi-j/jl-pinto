@@ -7,6 +7,7 @@ import { mkdir, writeFile, unlink } from 'fs/promises';
 import fetch from 'node-fetch';
 import { load as cheerioLoad } from 'cheerio';
 import TurndownService from 'turndown';
+import { isAllowedSiteUrl, isSafeHref } from './lib/site-url.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '..');
@@ -178,7 +179,7 @@ class WordPressImporter {
 
       $('.entry-title a, h2.entry-title a, article h2 a').each((_i, elem) => {
         const href = $(elem).attr('href');
-        if (!href || !href.includes('jlpinto.com')) return;
+        if (!href || !isAllowedSiteUrl(href, BASE_URL)) return;
         const url = new URL(href, BASE_URL).href;
         const slug = this.extractSlug(url);
         if (SPAM_SLUGS.has(slug) || url.includes('/category/')) return;
@@ -395,6 +396,11 @@ class WordPressImporter {
   }
 
   async fetchUrl(url) {
+    if (!isAllowedSiteUrl(url, BASE_URL)) {
+      console.warn(`   ⚠️  Blocked host: ${url}`);
+      return null;
+    }
+
     try {
       const response = await fetch(url, {
         headers: {
@@ -402,7 +408,13 @@ class WordPressImporter {
             'Mozilla/5.0 (compatible; JLPintoSiteMigrator/2.0; +https://jlpinto.es)',
         },
         timeout: 15000,
+        redirect: 'follow',
       });
+
+      if (!isAllowedSiteUrl(response.url, BASE_URL)) {
+        console.warn(`   ⚠️  Redirected off-site: ${response.url}`);
+        return null;
+      }
 
       if (!response.ok) {
         console.warn(`   ⚠️  HTTP ${response.status} for ${url}`);
@@ -424,12 +436,35 @@ class WordPressImporter {
   cleanHtml(html) {
     if (!html) return '';
     const $temp = cheerioLoad(`<div>${html}</div>`);
-    $temp('script, style, nav, .nav, .sharedaddy, .wp-block-spacer').remove();
+    $temp(
+      'script, style, nav, .nav, .sharedaddy, .wp-block-spacer, iframe, object, embed, form, link, meta, svg, math',
+    ).remove();
+
+    $temp('*').each((_i, elem) => {
+      const attribs = { ...elem.attribs };
+      for (const name of Object.keys(attribs)) {
+        if (name.toLowerCase().startsWith('on')) {
+          $temp(elem).removeAttr(name);
+        }
+      }
+    });
 
     $temp('a').each((_i, elem) => {
       const href = $temp(elem).attr('href') || '';
       const text = $temp(elem).text().toLowerCase();
       if (BLOCKED_PHRASES.some((p) => href.includes(p) || text.includes(p))) {
+        $temp(elem).remove();
+        return;
+      }
+      if (!isSafeHref(href, BASE_URL)) {
+        $temp(elem).removeAttr('href');
+      }
+    });
+
+    $temp('[src]').each((_i, elem) => {
+      const src = $temp(elem).attr('src') || '';
+      if (src.startsWith('/') && !src.startsWith('//')) return;
+      if (!isAllowedSiteUrl(src, BASE_URL)) {
         $temp(elem).remove();
       }
     });
@@ -500,7 +535,7 @@ class WordPressImporter {
     let downloadUrl = '';
     $('a[href]').each((_i, elem) => {
       const href = $(elem).attr('href') || '';
-      if (href.endsWith('.pdf') && href.includes('jlpinto.com')) {
+      if (href.endsWith('.pdf') && isAllowedSiteUrl(href, BASE_URL)) {
         downloadUrl = href;
         return false;
       }
@@ -516,7 +551,7 @@ class WordPressImporter {
 
     $('img[src]').each((_i, elem) => {
       const src = $(elem).attr('src');
-      if (!src || !src.includes('jlpinto.com')) return;
+      if (!src || !isAllowedSiteUrl(src, BASE_URL)) return;
       const url = new URL(src, BASE_URL).href;
       const filename = path.basename(new URL(url).pathname);
       this.downloadFile(url, path.join(assetDir, filename));
@@ -524,7 +559,7 @@ class WordPressImporter {
 
     $('a[href$=".pdf"]').each((_i, elem) => {
       const href = $(elem).attr('href');
-      if (!href?.includes('jlpinto.com')) return;
+      if (!href || !isAllowedSiteUrl(href, BASE_URL)) return;
       const url = new URL(href, BASE_URL).href;
       const filename = path.basename(new URL(url).pathname);
       this.downloadFile(url, path.join(assetDir, filename));
@@ -532,12 +567,14 @@ class WordPressImporter {
   }
 
   async downloadFile(url, filePath) {
+    if (!isAllowedSiteUrl(url, BASE_URL)) return;
     try {
       const response = await fetch(url, {
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JLPintoSiteMigrator/2.0)' },
         timeout: 20000,
+        redirect: 'follow',
       });
-      if (!response.ok) return;
+      if (!response.ok || !isAllowedSiteUrl(response.url, BASE_URL)) return;
       const buffer = await response.arrayBuffer();
       await mkdir(path.dirname(filePath), { recursive: true });
       fs.writeFileSync(filePath, Buffer.from(buffer));

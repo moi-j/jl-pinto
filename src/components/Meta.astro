@@ -3,6 +3,7 @@ import {
   DEFAULT_OG_IMAGE_PATH,
   getAbsoluteAssetUrl,
   getCanonicalUrl,
+  toJsonLd,
 } from '../utils/seo';
 
 export interface Props {
@@ -71,6 +72,6 @@ const structuredData = {
 <link rel="canonical" href={fullCanonical} />
 <link rel="alternate" hreflang="es" href={fullCanonical} />
 
-<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+<script type="application/ld+json" set:html={toJsonLd(structuredData)} />
 
 <slot />

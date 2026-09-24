@@ -2,11 +2,11 @@
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { sortByPublishedDate, dateFormatter } from '../../utils/content';
+import { sortByPublishedDate, dateFormatter, isPublished } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
 export async function getStaticPaths() {
-  const articles = await getCollection('articles');
+  const articles = await getCollection('articles', isPublished);
   return articles.map((article) => ({
     params: { slug: article.slug },
     props: { article },
@@ -20,7 +20,7 @@ const formattedDate = article.data.publishedDate
   ? dateFormatter.format(article.data.publishedDate)
   : null;
 
-const relatedArticles = sortByPublishedDate(await getCollection('articles'))
+const relatedArticles = sortByPublishedDate(await getCollection('articles', isPublished))
   .filter((a) => a.slug !== article.slug)
   .slice(0, 3);
 ---

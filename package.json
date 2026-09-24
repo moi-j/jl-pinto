@@ -17,14 +17,16 @@
   "dependencies": {
     "@astrojs/rss": "^4.0.0",
     "@astrojs/sitemap": "^3.0.0",
+    "@fontsource/cormorant-garamond": "^5.2.5",
+    "@fontsource/source-sans-3": "^5.2.6",
     "astro": "^4.0.0",
-    "cheerio": "^1.2.0",
-    "https-proxy-agent": "^9.1.0",
-    "node-fetch": "^2.7.0",
-    "turndown": "^7.2.4"
+    "rehype-sanitize": "^6.0.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "cheerio": "^1.2.0",
+    "node-fetch": "^2.7.0",
+    "turndown": "^7.2.4",
     "typescript": "^5.9.3"
   },
   "engines": {
