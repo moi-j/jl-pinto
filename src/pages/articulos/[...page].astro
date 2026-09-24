@@ -5,7 +5,7 @@ import SiteLayout from '../../components/SiteLayout.astro';
 import ArchiveHero from '../../components/ArchiveHero.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import Pagination from '../../components/Pagination.astro';
-import { sortByPublishedDate, countWords, isPublished } from '../../utils/content';
+import { sortByPublishedDate, countWords, isPublished, entrySlug } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
 export const getStaticPaths = (async ({ paginate }) => {
@@ -53,7 +53,7 @@ const canonicalPath =
         page.data.map((article) => (
           <ArticleCard
             title={article.data.title}
-            href={`/articulos/${article.slug}/`}
+            href={`/articulos/${entrySlug(article)}/`}
             summary={article.data.summary}
             publishedDate={article.data.publishedDate}
             wordCount={countWords(article.body)}

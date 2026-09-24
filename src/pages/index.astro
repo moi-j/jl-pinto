@@ -13,6 +13,7 @@ import {
   cleanSummary,
   dateFormatter,
   isPublished,
+  entrySlug,
 } from '../utils/content';
 import { getCanonicalUrl } from '../utils/seo';
 
@@ -53,7 +54,7 @@ const allPregones = sortByPublishedDate(proclamations);
       {featuredNovels.map((novel) => (
         <NovelCard
           title={novel.data.title}
-          href={`/novelas/${novel.slug}/`}
+          href={`/novelas/${entrySlug(novel)}/`}
           summary={novel.data.summary}
           year={novel.data.publishedYear}
           coverImage={novel.data.coverImage}
@@ -76,7 +77,7 @@ const allPregones = sortByPublishedDate(proclamations);
         {latestArticles.map((article) => (
           <ArticleCard
             title={article.data.title}
-            href={`/articulos/${article.slug}/`}
+            href={`/articulos/${entrySlug(article)}/`}
             summary={article.data.summary}
             publishedDate={article.data.publishedDate}
             wordCount={countWords(article.body)}
@@ -97,7 +98,7 @@ const allPregones = sortByPublishedDate(proclamations);
       {allPlays.map((play) => (
         <PlayCard
           title={play.data.title}
-          href={`/teatro/${play.slug}/`}
+          href={`/teatro/${entrySlug(play)}/`}
           summary={cleanSummary(
             play.data.summary,
             play.data.title,
@@ -123,7 +124,7 @@ const allPregones = sortByPublishedDate(proclamations);
           <li class="pregon-list__item">
             <div>
               <h3>
-                <a href={`/pregones/${pregon.slug}/`}>{pregon.data.title}</a>
+                <a href={`/pregones/${entrySlug(pregon)}/`}>{pregon.data.title}</a>
               </h3>
               <p>{pregon.data.summary}</p>
             </div>

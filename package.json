@@ -15,21 +15,21 @@
     "audit:content": "node scripts/audit-content.mjs"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.0",
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.0.0",
     "@fontsource/cormorant-garamond": "^5.2.5",
     "@fontsource/source-sans-3": "^5.2.6",
-    "astro": "^4.0.0",
+    "astro": "^5.18.2",
     "rehype-sanitize": "^6.0.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.6",
     "cheerio": "^1.2.0",
     "node-fetch": "^2.7.0",
     "turndown": "^7.2.4",
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   }
 }

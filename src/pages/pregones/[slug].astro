@@ -2,25 +2,26 @@
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { dateFormatter, isPublished } from '../../utils/content';
+import { dateFormatter, isPublished, entrySlug } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
+import { render } from 'astro:content';
 
 export async function getStaticPaths() {
   const proclamations = await getCollection('proclamations', isPublished);
   return proclamations.map((item) => ({
-    params: { slug: item.slug },
+    params: { slug: entrySlug(item) },
     props: { proclamation: item },
   }));
 }
 
 const { proclamation } = Astro.props;
-const { Content } = await proclamation.render();
+const { Content } = await render(proclamation);
 ---
 
 <SiteLayout
   title={`${proclamation.data.title} — Juan Luis Pinto`}
   description={proclamation.data.summary}
-  canonicalUrl={getCanonicalUrl(`/pregones/${proclamation.slug}/`)}
+  canonicalUrl={getCanonicalUrl(`/pregones/${entrySlug(proclamation)}/`)}
   currentPath="/pregones/"
   type="article"
 >

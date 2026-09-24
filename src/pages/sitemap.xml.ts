@@ -1,5 +1,5 @@
 import { getCollection } from 'astro:content';
-import { isPublished } from '../utils/content';
+import { isPublished, entrySlug } from '../utils/content';
 
 export async function GET() {
   const articles = await getCollection('articles', isPublished);
@@ -44,7 +44,7 @@ export async function GET() {
       : today;
 
     xml += '  <url>\n';
-    xml += `    <loc>https://jlpinto.com/articulos/${article.slug}/</loc>\n`;
+    xml += `    <loc>https://jlpinto.com/articulos/${entrySlug(article)}/</loc>\n`;
     xml += `    <lastmod>${lastmod}</lastmod>\n`;
     xml += '    <changefreq>monthly</changefreq>\n';
     xml += '    <priority>0.8</priority>\n';
@@ -66,7 +66,7 @@ export async function GET() {
       : today;
 
     xml += '  <url>\n';
-    xml += `    <loc>https://jlpinto.com/novelas/${novel.slug}/</loc>\n`;
+    xml += `    <loc>https://jlpinto.com/novelas/${entrySlug(novel)}/</loc>\n`;
     xml += `    <lastmod>${lastmod}</lastmod>\n`;
     xml += '    <changefreq>monthly</changefreq>\n';
     xml += '    <priority>0.8</priority>\n';
@@ -88,7 +88,7 @@ export async function GET() {
       : today;
 
     xml += '  <url>\n';
-    xml += `    <loc>https://jlpinto.com/teatro/${play.slug}/</loc>\n`;
+    xml += `    <loc>https://jlpinto.com/teatro/${entrySlug(play)}/</loc>\n`;
     xml += `    <lastmod>${lastmod}</lastmod>\n`;
     xml += '    <changefreq>monthly</changefreq>\n';
     xml += '    <priority>0.8</priority>\n';
@@ -110,7 +110,7 @@ export async function GET() {
       : today;
 
     xml += '  <url>\n';
-    xml += `    <loc>https://jlpinto.com/pregones/${proclamation.slug}/</loc>\n`;
+    xml += `    <loc>https://jlpinto.com/pregones/${entrySlug(proclamation)}/</loc>\n`;
     xml += `    <lastmod>${lastmod}</lastmod>\n`;
     xml += '    <changefreq>monthly</changefreq>\n';
     xml += '    <priority>0.8</priority>\n';

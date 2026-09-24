@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 import '../styles/fonts.css';
 import '../styles/global.css';
 import SiteHeader from './SiteHeader.astro';
@@ -41,7 +41,7 @@ const {
       type={type}
       publishedDate={publishedDate}
     />
-    <ViewTransitions />
+    <ClientRouter />
     <slot name="head" />
   </head>
   <body>

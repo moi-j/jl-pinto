@@ -2,25 +2,26 @@
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { isPublished, entrySlug } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
-import { isPublished } from '../../utils/content';
+import { render } from 'astro:content';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels', isPublished);
   return novels.map((novel) => ({
-    params: { slug: novel.slug },
+    params: { slug: entrySlug(novel) },
     props: { novel },
   }));
 }
 
 const { novel } = Astro.props;
-const { Content } = await novel.render();
+const { Content } = await render(novel);
 ---
 
 <SiteLayout
   title={`${novel.data.title} — Juan Luis Pinto`}
   description={novel.data.summary}
-  canonicalUrl={getCanonicalUrl(`/novelas/${novel.slug}/`)}
+  canonicalUrl={getCanonicalUrl(`/novelas/${entrySlug(novel)}/`)}
   ogImage={novel.data.coverImage}
   currentPath="/novelas/"
   type="article"

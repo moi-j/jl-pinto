@@ -2,19 +2,20 @@
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { cleanSummary, dateFormatter, isPublished } from '../../utils/content';
+import { cleanSummary, dateFormatter, isPublished, entrySlug } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
+import { render } from 'astro:content';
 
 export async function getStaticPaths() {
   const plays = await getCollection('plays', isPublished);
   return plays.map((play) => ({
-    params: { slug: play.slug },
+    params: { slug: entrySlug(play) },
     props: { play },
   }));
 }
 
 const { play } = Astro.props;
-const { Content } = await play.render();
+const { Content } = await render(play);
 
 const summary = cleanSummary(
   play.data.summary,
@@ -26,7 +27,7 @@ const summary = cleanSummary(
 <SiteLayout
   title={`${play.data.title} — Teatro — Juan Luis Pinto`}
   description={summary}
-  canonicalUrl={getCanonicalUrl(`/teatro/${play.slug}/`)}
+  canonicalUrl={getCanonicalUrl(`/teatro/${entrySlug(play)}/`)}
   ogImage={play.data.coverImage}
   currentPath="/teatro/"
   type="article"

@@ -1,7 +1,7 @@
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
 import rss from '@astrojs/rss';
-import { isPublished } from '../utils/content';
+import { isPublished, entrySlug } from '../utils/content';
 
 export async function GET(context: APIContext) {
   const articles = await getCollection('articles', isPublished);
@@ -20,7 +20,7 @@ export async function GET(context: APIContext) {
       title: article.data.title,
       pubDate: article.data.publishedDate || new Date(),
       description: article.data.summary || '',
-      link: `/articulos/${article.slug}/`,
+      link: `/articulos/${entrySlug(article)}/`,
     })),
     customData: `<language>es-es</language>`,
   });

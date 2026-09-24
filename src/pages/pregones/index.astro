@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import ArchiveHero from '../../components/ArchiveHero.astro';
-import { sortByPublishedDate, dateFormatter, isPublished } from '../../utils/content';
+import { sortByPublishedDate, dateFormatter, isPublished, entrySlug } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
 const pregones = sortByPublishedDate(await getCollection('proclamations', isPublished));
@@ -27,7 +27,7 @@ const pregones = sortByPublishedDate(await getCollection('proclamations', isPubl
         <li class="pregon-archive__item">
           <article>
             <h2>
-              <a href={`/pregones/${pregon.slug}/`}>{pregon.data.title}</a>
+              <a href={`/pregones/${entrySlug(pregon)}/`}>{pregon.data.title}</a>
             </h2>
             <p>{pregon.data.summary}</p>
             <div class="pregon-archive__meta">
@@ -36,7 +36,7 @@ const pregones = sortByPublishedDate(await getCollection('proclamations', isPubl
                   {dateFormatter.format(pregon.data.eventDate)}
                 </time>
               )}
-              <a class="pregon-archive__link" href={`/pregones/${pregon.slug}/`}>
+              <a class="pregon-archive__link" href={`/pregones/${entrySlug(pregon)}/`}>
                 Leer pregón →
               </a>
             </div>

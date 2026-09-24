@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import ArchiveHero from '../../components/ArchiveHero.astro';
 import NovelCard from '../../components/NovelCard.astro';
-import { sortNovelsByYear, isPublished } from '../../utils/content';
+import { sortNovelsByYear, isPublished, entrySlug } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
 const novels = sortNovelsByYear(await getCollection('novels', isPublished));
@@ -27,7 +27,7 @@ const novels = sortNovelsByYear(await getCollection('novels', isPublished));
       {novels.map((novel) => (
         <NovelCard
           title={novel.data.title}
-          href={`/novelas/${novel.slug}/`}
+          href={`/novelas/${entrySlug(novel)}/`}
           summary={novel.data.summary}
           year={novel.data.publishedYear}
           coverImage={novel.data.coverImage}

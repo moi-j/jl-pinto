@@ -2,7 +2,7 @@
 import SiteLayout from '../components/SiteLayout.astro';
 import { getCollection } from 'astro:content';
 import sobreMiRaw from '../data/sobre-mi.md?raw';
-import { sortNovelsByYear, isPublished } from '../utils/content';
+import { sortNovelsByYear, isPublished, entrySlug } from '../utils/content';
 import { getCanonicalUrl } from '../utils/seo';
 
 const paragraphs = sobreMiRaw
@@ -85,7 +85,7 @@ const novelList = sortNovelsByYear(novels);
       {novelList.map((novel) => (
         <li>
           <span class="timeline__year">{novel.data.publishedYear ?? '—'}</span>
-          <a href={`/novelas/${novel.slug}/`}>{novel.data.title}</a>
+          <a href={`/novelas/${entrySlug(novel)}/`}>{novel.data.title}</a>
         </li>
       ))}
     </ul>

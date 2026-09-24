@@ -11,6 +11,13 @@ export function isPublished(entry: { data: { draft?: boolean } }): boolean {
   return entry.data.draft !== true;
 }
 
+/** URL slug for a content entry (Content Layer `id` is the filename stem). */
+export function entrySlug(entry: { id: string }): string {
+  const base = entry.id.replace(/\\/g, '/');
+  const segment = base.split('/').pop() ?? base;
+  return segment.replace(/\.md$/i, '');
+}
+
 function entryTimestamp(entry: DatedEntry): number {
   if (entry.data.publishedDate) return entry.data.publishedDate.getTime();
   if (entry.data.eventDate) return entry.data.eventDate.getTime();
@@ -31,7 +38,8 @@ export function sortNovelsByYear<T extends { data: { publishedYear?: number } }>
   );
 }
 
-export function countWords(text: string): number {
+export function countWords(text: string | undefined): number {
+  if (!text?.trim()) return 0;
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 

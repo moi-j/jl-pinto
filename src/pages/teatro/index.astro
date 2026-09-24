@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import SiteLayout from '../../components/SiteLayout.astro';
 import ArchiveHero from '../../components/ArchiveHero.astro';
 import PlayCard from '../../components/PlayCard.astro';
-import { sortByPublishedDate, cleanSummary, isPublished } from '../../utils/content';
+import { sortByPublishedDate, cleanSummary, isPublished, entrySlug } from '../../utils/content';
 import { getCanonicalUrl } from '../../utils/seo';
 
 const plays = sortByPublishedDate(await getCollection('plays', isPublished));
@@ -27,7 +27,7 @@ const plays = sortByPublishedDate(await getCollection('plays', isPublished));
       {plays.map((play) => (
         <PlayCard
           title={play.data.title}
-          href={`/teatro/${play.slug}/`}
+          href={`/teatro/${entrySlug(play)}/`}
           summary={cleanSummary(
             play.data.summary,
             play.data.title,
