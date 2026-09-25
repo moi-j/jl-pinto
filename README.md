@@ -4,7 +4,7 @@ Sitio literario en español para J.L. Pinto: contenido en Markdown, búsqueda es
 
 ## Requisitos
 
-- Node.js 18+
+- Node.js 22.12.0+
 - npm
 
 ## Scripts npm
@@ -72,7 +72,7 @@ npm run build
 1. Conecta el repositorio (o sube `dist/` manualmente).
 2. **Build command:** `npm run build`
 3. **Build output directory:** `dist`
-4. **Node version:** 18 o superior (variable de entorno `NODE_VERSION=18` si hace falta).
+4. **Node version:** 22.12.0 o superior (variable de entorno `NODE_VERSION=22.12.0` si hace falta).
 5. El dominio `jlpinto.com` y el DNS son un paso aparte; este repo solo deja la build lista.
 
 Artefactos que debe contener `dist/` tras un build correcto: `pagefind/`, `sitemap.xml`, `rss.xml`, `_redirects`, y rutas como `buscar/`, `articulos/`, etc.

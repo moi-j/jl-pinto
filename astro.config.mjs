@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import rehypeSanitize from 'rehype-sanitize';
 import { rehypePdfNewTab } from './src/plugins/rehype-pdf-new-tab.mjs';
 import { markdownSanitizeSchema } from './src/plugins/rehype-sanitize-schema.mjs';
@@ -17,9 +18,11 @@ export default defineConfig({
   },
   integrations: [],
   markdown: {
-    rehypePlugins: [
-      [rehypeSanitize, markdownSanitizeSchema],
-      rehypePdfNewTab,
-    ],
+    processor: unified({
+      rehypePlugins: [
+        [rehypeSanitize, markdownSanitizeSchema],
+        rehypePdfNewTab,
+      ],
+    }),
   },
 });

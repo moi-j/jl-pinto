@@ -22,14 +22,14 @@ function isSitePath(value: string): boolean {
 /** Absolute https URL (https://…) or site-root path (/downloads/…). */
 export const linkUrl = z.string().refine(
   (value) => isHttpsUrl(value) || isSitePath(value),
-  { message: 'Must be an https:// URL or a site path starting with a single /' },
+  { error: 'Must be an https:// URL or a site path starting with a single /' },
 );
 
 export const optionalLinkUrl = linkUrl.optional();
 
 export const optionalHttpsUrl = z
   .string()
-  .refine(isHttpsUrl, { message: 'Must be an https:// URL' })
+  .refine(isHttpsUrl, { error: 'Must be an https:// URL' })
   .optional();
 
 export const optionalAssetPath = z
@@ -42,7 +42,7 @@ export const optionalAssetPath = z
         /^\/downloads\//.test(value) ||
         value === '/og-image.jpg'),
     {
-      message:
+      error:
         'Asset must be a local /images, /assets, /downloads, or /og-image.jpg path',
     },
   )

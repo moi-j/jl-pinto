@@ -46,7 +46,7 @@ git push -u origin main
 
    | Name | Value |
    |------|--------|
-   | `NODE_VERSION` | `18` |
+   | `NODE_VERSION` | `22.12.0` |
 
 5. **Save and deploy**. Every push to `main` triggers a new build.
 
